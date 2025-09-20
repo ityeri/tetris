@@ -3,8 +3,8 @@ from threading import Thread
 
 from blessed import Terminal
 
-from src.tetris import Core
-from src.tetris.display_map import DisplayMap
+from tetris import Core
+from tetris.display_map import DisplayMap
 from .event import Event, KeyEvent
 from .key_map import Keymap, ControlType
 from .key_type import KeyType
@@ -33,6 +33,7 @@ class Game:
     def run(self):
         self.key_dispatch_thread = Thread(target=self.key_dispatcher, daemon=True)
         self.key_dispatch_thread.start()
+        self.core.init()
 
         clk = Clock()
         tick_timer = 0

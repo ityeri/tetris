@@ -20,6 +20,10 @@ class Core:
         for i in range(4):
             self.que.extend()
 
+        self.que.extend()
+        t_type = self.que.pop()
+        self.tetromino = Tetromino(t_type.spawn_x, t_type.spawn_y, t_type)
+
     def left(self, distance: int) -> bool:
         for i in range(distance):
             self.tetromino.x -= 1
@@ -115,6 +119,7 @@ class Core:
             self.tetromino = Tetromino(t_type.spawn_x, t_type.spawn_y, t_type)
 
         self.map_changed = True
+        self.landed = False
 
     def remove_filled_line(self):
         for y in range(self.fixed_map.height):
