@@ -1,14 +1,18 @@
 import time
 from threading import Thread
 
+import tereen
 from blessed import Terminal
 
 from tetris import Core
 from tetris.display_map import DisplayMap
+from .display_map_surface import DisplayMapSurface
 from .event import Event, KeyEvent
 from .key_map import Keymap, ControlType
 from .key_type import KeyType
 
+CELL_WIDTH = 4
+CELL_HEIGHT = 2
 
 class Clock:
     def __init__(self):
@@ -23,6 +27,7 @@ class Clock:
 
 class Game:
     def __init__(self):
+        self.screen = tereen.Screen()
         self.event_list: list[Event] = list()
         self.key_dispatch_thread: Thread | None = None
         self.keymap: Keymap = Keymap()
@@ -34,12 +39,14 @@ class Game:
         self.key_dispatch_thread = Thread(target=self.key_dispatcher, daemon=True)
         self.key_dispatch_thread.start()
         self.core.init()
+        self.screen.init()
+        self.screen.start_listener()
 
         clk = Clock()
         tick_timer = 0
 
         while True:
-            time.sleep(1 / 60)
+            time.sleep(1 / 30)
             dt = clk.tick()
 
             for event in self.event_list:
@@ -76,12 +83,19 @@ class Game:
                     fixed_map=self.core.fixed_map,
                     tetromino=self.core.tetromino
                 )
-                display_map.flush_map(4, 2, 4, 2)
-                self.core.map_changed = False
+                surface = DisplayMapSurface(display_map, 4, 2)
 
+                self.screen.display.blit(
+                    surface, 4, 2
+                )
+                self.screen.flush()
+                self.core.map_changed = False
 
             self.event_list.clear()
             self.keymap.event_clear()
+
+    def flush(self):
+        ...
 
     def key_dispatcher(self):
         term = Terminal()

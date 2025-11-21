@@ -7,5 +7,6 @@ __all__ = [
     "Core",
     "FixedMap",
     "Tetromino",
-    "TetrominoType"
+    "TetrominoType",
+    "terminal_runner"
 ]

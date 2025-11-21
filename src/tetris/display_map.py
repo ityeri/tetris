@@ -21,20 +21,6 @@ class DisplayMap:
                         self.data[y][x] = tetromino.type
                 except IndexError: pass
 
-    # 이 매서드는 원래 여깄으면 안됨
-    def flush_map(self, x: int, y: int, pixel_width: int, pixel_height: int):
-        for pixel_y in range(self.height):
-            for pixel_x in range(self.width):
-                pixel_type = self.data[pixel_y][pixel_x]
-                if pixel_type is None:
-                    char = " "
-                else:
-                    char = term.on_color_rgb(*pixel_type.color)(" ")
-
-                for subpixel_y in range(pixel_height):
-                    print(
-                        term.move_xy(
-                            x + pixel_x * pixel_width,
-                            y + pixel_y * pixel_height + subpixel_y
-                        ) + char * pixel_width + " |"
-                    )
+    def __getitem__(self, position: tuple[int, int]) -> TetrominoType | None:
+        if position[0] < 0 or position[1] < 0: raise IndexError
+        return self.data[position[1]][position[0]]
